@@ -20,12 +20,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const initAuth0 = async () => {
-      // Pega do process.env injetado pelo index.html
       const domain = process.env.AUTH0_DOMAIN;
       const clientId = process.env.AUTH0_CLIENT_ID;
 
       if (!domain || !clientId) {
-        console.error("Configurações Auth0 ausentes no ambiente.");
+        console.warn("Configurações Auth0 ausentes. Verifique as variáveis de ambiente.");
         setLoading(false);
         return;
       }
@@ -36,17 +35,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           clientId: clientId,
           authorizationParams: {
             redirect_uri: window.location.origin,
+            scope: 'openid profile email offline_access'
           },
-          cacheLocation: 'localstorage'
+          cacheLocation: 'localstorage',
+          useRefreshTokens: true
         });
 
         setAuth0Client(client);
 
-        // Trata o retorno do callback
         const params = new URLSearchParams(window.location.search);
         if (params.has("code") && params.has("state")) {
           await client.handleRedirectCallback();
-          window.history.replaceState({}, document.title, window.location.pathname);
+          window.history.replaceState({}, document.title, window.location.origin);
         }
 
         const isAuth = await client.isAuthenticated();
@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(userProfile || null);
         }
       } catch (error) {
-        console.error("Falha na inicialização do Auth0:", error);
+        console.error("Auth0 Init Error:", error);
       } finally {
         setLoading(false);
       }
@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await auth0Client.loginWithRedirect();
     } catch (e) {
-      console.error("Erro ao iniciar login:", e);
+      console.error("Login failed:", e);
     }
   };
 
@@ -92,6 +92,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth deve ser usado dentro de um AuthProvider');
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
 };

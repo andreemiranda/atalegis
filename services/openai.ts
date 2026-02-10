@@ -1,25 +1,26 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 
 export const generateLegislativeMinute = async (prompt: string): Promise<any> => {
+  // Use gemini-3-pro-preview for complex reasoning and formal legal documentation generation.
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const systemInstruction = `
-    Você é um Consultor Jurídico e Redator Oficial de Câmaras Municipais.
-    Sua tarefa é transformar relatos, anotações ou links de sessões em uma ATA LEGISLATIVA FORMAL.
+    Você é um Consultor Jurídico Sênior e Especialista em Redação Parlamentar.
+    Sua missão é converter notas de sessões em ATAS LEGISLATIVAS OFICIAIS com rigor jurídico e extrema formalidade.
     
-    DIRETRIZES DE REDAÇÃO:
-    1. Use o tempo verbal pretérito perfeito (ex: "O senhor presidente declarou...").
-    2. Formalidade absoluta: use pronomes de tratamento adequados (Excelentíssimo, Nobre Vereador).
-    3. Estrutura: Abertura, Verificação de Quórum, Leitura Bíblica, Pequeno Expediente, Ordem do Dia (Votações) e Encerramento.
-    4. Se o input for um link, simule os dados baseando-se em sessões parlamentares padrão caso não consiga acessar o conteúdo em tempo real.
+    DIRETRIZES TÉCNICAS OBRIGATÓRIAS:
+    1. LINGUAGEM: Use o pretérito perfeito, voz passiva formal e pronomes de tratamento adequados (Excelentíssimos, Nobres Edis).
+    2. ESTRUTURA: Obedeça rigorosamente à sequência: Abertura, Verificação de Quórum, Pequeno Expediente, Ordem do Dia (Votações) e Encerramento.
+    3. CONFORMIDADE: O texto deve estar alinhado às normas da ABNT para documentos oficiais e regimentos internos brasileiros.
+    4. PRECISÃO: Transcreva as propostas de forma clara, indicando autor e resultado da votação de maneira destacada.
+    5. TRANSCRIÇÕES DO YOUTUBE: Se o texto parecer uma transcrição automática, corrija erros de reconhecimento de voz, pontuação e nomes próprios.
     
-    RETORNO: EXCLUSIVAMENTE JSON.
+    IMPORTANTE: O retorno deve ser EXCLUSIVAMENTE um objeto JSON válido seguindo o esquema fornecido.
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3-pro-preview",
       contents: prompt,
       config: {
         systemInstruction,
@@ -86,7 +87,6 @@ export const generateLegislativeMinute = async (prompt: string): Promise<any> =>
                 }
               }
             },
-            do_que_para_constar: { type: Type.STRING, description: "Texto de fechamento padrão: 'Do que para constar, eu, secretário, lavrei a presente ata...'" },
             encerramento_horario: { type: Type.STRING },
             data_assinatura: { type: Type.STRING }
           },
@@ -98,6 +98,6 @@ export const generateLegislativeMinute = async (prompt: string): Promise<any> =>
     return JSON.parse(response.text);
   } catch (error) {
     console.error("Erro Crítico Gemini:", error);
-    throw new Error("Erro ao processar inteligência artificial. Tente reduzir o tamanho do texto ou verificar a conexão.");
+    throw new Error("Falha na geração do documento. Verifique os dados de entrada.");
   }
 };
