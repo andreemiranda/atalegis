@@ -1,0 +1,32 @@
+{
+  "name": "atalegis-ia",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "@google/genai": "1.4.0",
+    "@chakra-ui/react": "3.8.0",
+    "@emotion/react": "11.11.1",
+    "@emotion/styled": "11.11.0",
+    "framer-motion": "11.11.0",
+    "jspdf": "2.5.1",
+    "html2canvas": "1.4.1",
+    "docx": "9.1.0",
+    "file-saver": "2.0.5",
+    "@auth0/auth0-spa-js": "2.1.3",
+    "react-router-dom": "^7.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}
